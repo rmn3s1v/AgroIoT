@@ -1,0 +1,11 @@
+{
+    "device_id": "device_id",
+    "device_type": "device_climate",
+    "timestamp": "data",
+    "metrics": {
+        "temperature": "temperature",
+        "air_humidity": "air_humidity",
+        "lux": "lux",
+        "co2_level": "co2_level"
+    }
+}

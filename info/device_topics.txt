@@ -1,0 +1,5 @@
+devices/{device_type}/{device_id}/telemetry
+
+example:
+devices/soil_sensor/sensor-1/telemetry
+devices/climate_sensor/sensor-2/telemetry

@@ -1,0 +1,10 @@
+{
+    "device_id": "device_id",
+    "device_type": "device_soil",
+    "timestamp": "data",
+    "metrics": {
+        "soil_moisture": "soil_moisture",
+        "soil_temperature": "soil_temperature",
+        "soil_ph": "soil_ph"
+    }
+}
