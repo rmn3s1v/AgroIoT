@@ -1,0 +1,155 @@
+basePath: /
+host: localhost:8080
+info:
+  contact: {}
+  description: API for reading device telemetry and aggregate metrics.
+  title: AgroIoT API Service
+  version: "1.0"
+paths:
+  /devices/{device_id}/aggregates:
+    get:
+      description: Returns avg, min, and max values for a device metric in the requested
+        time range.
+      parameters:
+      - description: Device ID
+        in: path
+        name: device_id
+        required: true
+        type: string
+      - description: Metric name
+        example: temperature
+        in: query
+        name: metric
+        required: true
+        type: string
+      - description: Start time in RFC3339 format
+        example: "2026-05-10T00:00:00Z"
+        in: query
+        name: from
+        type: string
+      - description: End time in RFC3339 format
+        example: "2026-05-10T23:59:59Z"
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get metric aggregates
+      tags:
+      - telemetry
+  /devices/{device_id}/aggregates/timeseries:
+    get:
+      description: Returns avg, min, and max values grouped by hour or day for a device
+        metric.
+      parameters:
+      - description: Device ID
+        in: path
+        name: device_id
+        required: true
+        type: string
+      - description: Metric name
+        example: temperature
+        in: query
+        name: metric
+        required: true
+        type: string
+      - default: hour
+        description: Aggregation interval
+        enum:
+        - hour
+        - day
+        in: query
+        name: interval
+        type: string
+      - description: Start time in RFC3339 format
+        example: "2026-05-10T00:00:00Z"
+        in: query
+        name: from
+        type: string
+      - description: End time in RFC3339 format
+        example: "2026-05-10T23:59:59Z"
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get time-series metric aggregates
+      tags:
+      - telemetry
+  /devices/{device_id}/telemetry:
+    get:
+      description: Returns telemetry records for a device in the requested time range.
+      parameters:
+      - description: Device ID
+        in: path
+        name: device_id
+        required: true
+        type: string
+      - description: Start time in RFC3339 format
+        example: "2026-05-10T00:00:00Z"
+        in: query
+        name: from
+        type: string
+      - description: End time in RFC3339 format
+        example: "2026-05-10T23:59:59Z"
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get device telemetry
+      tags:
+      - telemetry
+swagger: "2.0"

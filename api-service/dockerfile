@@ -9,6 +9,9 @@ RUN go mod download
 
 COPY . .
 
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+RUN swag init -g cmd/main.go
+
 RUN go build -o api-service ./cmd/main.go
 
 CMD ["./api-service"]
