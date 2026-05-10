@@ -8,8 +8,8 @@ import (
 )
 
 func main() {
-	rabbit := rabbitmq.NewConsumer("amqp://guest:guest@localhost:5672/")
-	mongo := mongodb.NewClient("mongodb://localhost:27017")
+	rabbit := rabbitmq.NewConsumer("amqp://guest:guest@rabbitmq:5672/")
+	mongo := mongodb.NewClient("mongodb://mongodb:27017")
 
 	log.Println("Processing service started")
 

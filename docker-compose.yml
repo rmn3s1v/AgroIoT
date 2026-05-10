@@ -1,0 +1,49 @@
+services:
+  mqtt:
+    image: eclipse-mosquitto
+    container_name: mqtt
+    ports:
+      - "1883:1883"
+
+  rabbitmq:
+    image: rabbitmq:3-managment
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  mongodb:
+    image: mongo:7
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  ingestion-service:
+    build:
+      context: ./ingestion-service
+  container_name: ingestion-service
+    depends_on:
+      - mqtt
+      - rabbitmq
+
+  processing-service:
+    build:
+      context: ./processing-service
+    container_name: processing-service
+    depends_on:
+      - rabbitmq
+      - mongodb
+
+  api-service:
+    build:
+      context: ./api-service
+    container_name: api-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+
+volumes:
+  mongo_data:

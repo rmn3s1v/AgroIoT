@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	mongo := mongodb.NewClient("mongodb://localhost:27017")
+	mongo := mongodb.NewClient("mongodb://mongodb:27017")
 
 	service := service.NewTelemetryService(mongo.Collection)
 	handler := handler.NewHandler(service)

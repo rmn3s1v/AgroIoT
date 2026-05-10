@@ -9,11 +9,11 @@ import (
 )
 
 func main() {
-	broker := "tcp://localhost:1883"
+	broker := "tcp://mqtt:1883"
 
 	mqttClient := mqtt.NewClient(broker, "ingestion-service")
 
-	rabbit := rabbitmq.NewClient("amqp://guest:guest@localhost:5672/")
+	rabbit := rabbitmq.NewClient("amqp://guest:guest@rabbitmq:5672/")
 
 	topic := "devices/+/+/telemetry"
 
