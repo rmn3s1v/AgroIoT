@@ -1,12 +1,14 @@
 services:
-  mqtt:
-    image: eclipse-mosquitto
-    container_name: mqtt
+
+  emqx:
+    image: emqx/emqx:latest
+    container_name: emqx
     ports:
       - "1883:1883"
+      - "18083:18083"
 
   rabbitmq:
-    image: rabbitmq:3-managment
+    image: rabbitmq:3-management
     container_name: rabbitmq
     ports:
       - "5672:5672"
@@ -23,9 +25,9 @@ services:
   ingestion-service:
     build:
       context: ./ingestion-service
-  container_name: ingestion-service
+    container_name: ingestion-service
     depends_on:
-      - mqtt
+      - emqx
       - rabbitmq
 
   processing-service:

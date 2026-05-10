@@ -1,8 +1,10 @@
 package rabbitmq
 
 import (
+	"context"
 	"encoding/json"
 	"log"
+	"time"
 
 	"processing-service/internal/model"
 	"processing-service/internal/mongodb"
@@ -15,9 +17,20 @@ type Consumer struct {
 }
 
 func NewConsumer(url string) *Consumer {
-	conn, err := amqp.Dial(url)
-	if err != nil {
-		log.Fatal(err)
+
+	var conn *amqp.Connection
+	var err error
+
+	for {
+		conn, err = amqp.Dial(url)
+
+		if err != nil {
+			log.Println("RabbitMQ not ready, retrying...")
+			time.Sleep(5 * time.Second)
+			continue
+		}
+
+		break
 	}
 
 	ch, err := conn.Channel()
@@ -25,19 +38,36 @@ func NewConsumer(url string) *Consumer {
 		log.Fatal(err)
 	}
 
-	return &Consumer{channel: ch}
+	return &Consumer{
+		channel: ch,
+	}
 }
 
 func (c *Consumer) Consume(queue string, mongoClient *mongodb.Client) {
-	msgs, err := c.channel.Consume(
+
+	_, err := c.channel.QueueDeclare(
 		queue,
-		"",
-		true, // auto-ack
+		true,
 		false,
 		false,
 		false,
 		nil,
 	)
+
+	if err != nil {
+		log.Fatal("Queue declare error:", err)
+	}
+
+	msgs, err := c.channel.Consume(
+		queue,
+		"",
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -46,6 +76,7 @@ func (c *Consumer) Consume(queue string, mongoClient *mongodb.Client) {
 
 	go func() {
 		for msg := range msgs {
+
 			var telemetry model.Telemetry
 
 			err := json.Unmarshal(msg.Body, &telemetry)
@@ -54,7 +85,11 @@ func (c *Consumer) Consume(queue string, mongoClient *mongodb.Client) {
 				continue
 			}
 
-			_, err = mongoClient.Collection.InsertOne(nil, telemetry)
+			_, err = mongoClient.Collection.InsertOne(
+				context.Background(),
+				telemetry,
+			)
+
 			if err != nil {
 				log.Println("Mongo insert error:", err)
 				continue

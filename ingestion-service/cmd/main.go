@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	broker := "tcp://mqtt:1883"
+	broker := "tcp://emqx:1883"
 
 	mqttClient := mqtt.NewClient(broker, "ingestion-service")
 

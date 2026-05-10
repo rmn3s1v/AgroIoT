@@ -1,4 +1,4 @@
-FROM golang:1.24-alpha
+FROM golang:1.25.7
 
 WORKDIR /app
 
@@ -9,6 +9,6 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o processing-service ./app/main.go
+RUN go build -o processing-service ./cmd/main.go
 
 CMD ["./processing-service"]
